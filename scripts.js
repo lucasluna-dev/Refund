@@ -2,6 +2,7 @@ const amount = document.getElementById("amount")
 const expense = document.getElementById("expense")
 const category = document.getElementById("category")
 const form = document.querySelector("form")
+const expenseList = document.querySelector("ul")
 
 // Captura o evento de input para formatar o valor.
 amount.oninput = () =>{
@@ -32,5 +33,29 @@ form.onsubmit = (event) =>{
         amount: amount.value,
         created_at: new Date(),
     }
+
+    expenseAdd(newExpense)//chamando function para ser executada
 }
 
+
+//function para dicionar nova dispesa na listaddd
+function expenseAdd(newExpense){
+    try {
+        //Cria o elemto para adicionar na lista.
+        const expenseItem = document.createElement("li")
+        expenseItem.classList.add("expense")
+
+        // cria o icone da categoria
+        const expenseIcon = document.createElement("img")
+        expenseIcon.setAttribute("src", `img/${newExpense.category_id}.svg`)
+        expenseIcon.setAttribute("alt", newExpense.category_name)
+
+        
+        expenseItem.append(expenseIcon)// adiciona as informações no item.
+        expenseList.append(expenseItem)// adiciona o item na lista
+
+    } catch (error) {
+        alert("Não foi possível atualizar a lista de despesas")// exibir menssagem para o usuário
+        console.log(error)// esibir erro para o dev
+    }
+}
