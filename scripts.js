@@ -3,6 +3,7 @@ const expense = document.getElementById("expense")
 const category = document.getElementById("category")
 const form = document.querySelector("form")
 const expenseList = document.querySelector("ul")
+const expenseQuantity = document.querySelector("aside header p span")
 
 // Captura o evento de input para formatar o valor.
 amount.oninput = () =>{
@@ -38,7 +39,7 @@ form.onsubmit = (event) =>{
 }
 
 
-//function para dicionar nova dispesa na listaddd
+//function para dicionar nova dispesa na lista
 function expenseAdd(newExpense){
     try {
         //Cria o elemto para adicionar na lista.
@@ -76,13 +77,37 @@ function expenseAdd(newExpense){
             .replace("R$", "")}`
 
 
-        // adicionando todos os atributos criados dentro da ul
-        expenseItem.append(expenseIcon, expenseInfo, expenseAmount)
-        expenseList.append(expenseItem)
+    
+        //adiciona icon remove
+        const expenseIconRemove = document.createElement("img")
+        expenseIconRemove.setAttribute("src", `img/remove.svg`)
+        expenseIconRemove.setAttribute("alt", "remove")
+        expenseIconRemove.classList.add("remove-icon")
 
+
+        // adicionando todos os atributos criados dentro da ul
+        expenseItem.append(expenseIcon, expenseInfo, expenseAmount, expenseIconRemove)
+        expenseList.append(expenseItem)
+        
+        //Atualiza os totais
+        updateTotals(expenseItem)
 
     } catch (error) {
-        alert("Não foi possível atualizar a lista de despesas")// exibir menssagem para o usuário
-        console.log(error)// esibir erro para o dev
+        alert("Não foi possível atualizar a lista de despesas")
+        console.log(error)
+    }
+}
+
+
+// atualiza os totais.
+
+function updateTotals(){
+    try {
+        //Recupera todos os itens li da lista ul
+        const items = expenseList.children // quantos filhos tem a ul
+        expenseQuantity.textContent = `${items.length} ${items.length > 1 ? "despesas" : "despesa"}`
+    } catch (error) {
+        console.log(error)
+        alert("Não foi possivel atualizar os totais.")
     }
 }
