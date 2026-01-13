@@ -106,6 +106,18 @@ function updateTotals(){
         //Recupera todos os itens li da lista ul
         const items = expenseList.children // quantos filhos tem a ul
         expenseQuantity.textContent = `${items.length} ${items.length > 1 ? "despesas" : "despesa"}`
+
+
+        const total = 0
+
+        // percorre cada item li da lista ul
+       for(let item = 0; item < items.length; item++){
+            const itemAmount = items[item].querySelector(".expense-amount")
+
+            // remove caracteres não numéricos e subistitui a virgula pelo ponto.
+            let value = itemAmount.textContent.replace(/[^\d]/g, "").replace(",",".")
+            console.log(value)
+       }
     } catch (error) {
         console.log(error)
         alert("Não foi possivel atualizar os totais.")
