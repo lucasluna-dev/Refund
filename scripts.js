@@ -4,6 +4,7 @@ const category = document.getElementById("category")
 const form = document.querySelector("form")
 const expenseList = document.querySelector("ul")
 const expenseQuantity = document.querySelector("aside header p span")
+const expenseTotal = document.querySelector("aside header h2")
 
 // Captura o evento de input para formatar o valor.
 amount.oninput = () =>{
@@ -88,9 +89,12 @@ function expenseAdd(newExpense){
         // adicionando todos os atributos criados dentro da ul
         expenseItem.append(expenseIcon, expenseInfo, expenseAmount, expenseIconRemove)
         expenseList.append(expenseItem)
+
+        // Limpa o formulário para adicionar um item novo
+        formClear()
         
         //Atualiza os totais
-        updateTotals(expenseItem)
+        updateTotals()
 
     } catch (error) {
         alert("Não foi possível atualizar a lista de despesas")
@@ -99,27 +103,60 @@ function expenseAdd(newExpense){
 }
 
 
-// atualiza os totais.
-
-function updateTotals(){
+function updateTotals() {
     try {
-        //Recupera todos os itens li da lista ul
-        const items = expenseList.children // quantos filhos tem a ul
+        const items = expenseList.children
         expenseQuantity.textContent = `${items.length} ${items.length > 1 ? "despesas" : "despesa"}`
 
+        let total = 0
 
-        const total = 0
+        for (let i = 0; i < items.length; i++) {
+            const itemAmount = items[i].querySelector(".expense-amount")
 
-        // percorre cada item li da lista ul
-       for(let item = 0; item < items.length; item++){
-            const itemAmount = items[item].querySelector(".expense-amount")
+            // Remove símbolos e pontos, troca vírgula por ponto decimal
+            let value = itemAmount.textContent.replace(/[^\d,]/g, "").replace(",", ".")
+            value = parseFloat(value)
 
-            // remove caracteres não numéricos e subistitui a virgula pelo ponto.
-            let value = itemAmount.textContent.replace(/[^\d]/g, "").replace(",",".")
-            console.log(value)
-       }
+            if (isNaN(value)) {
+                return alert("Não foi possível calcular o total. O valor não parece ser um número.")
+            }
+
+            total += value
+        }
+
+        // Formatação visual
+        const symbolBRL = document.createElement("small")
+        symbolBRL.textContent = "R$"
+
+        // Garanta que formatCurrencyBRL receba o número puro
+        let formattedValue = formatCurrencyBRL(total).toUpperCase().replace("R$", "")
+
+        expenseTotal.innerHTML = ""
+        expenseTotal.append(symbolBRL, formattedValue)
+
     } catch (error) {
-        console.log(error)
-        alert("Não foi possivel atualizar os totais.")
+        console.error(error)
+        alert("Não foi possível atualizar os totais.")
     }
+}
+
+expenseList.addEventListener("click", function (event) {
+    if (event.target.classList.contains("remove-icon")) {
+        const item = event.target.closest(".expense")
+        item.remove()
+        
+        // Atualiza apenas se algo foi removido
+        updateTotals()
+    }
+})
+
+
+// Limpa os inputs do formulário 
+function formClear() {
+    expense.value = ""
+    category.value = ""
+    amount.value = ""
+
+    // Coloca o foco no input de amount
+    expense.focus()
 }
